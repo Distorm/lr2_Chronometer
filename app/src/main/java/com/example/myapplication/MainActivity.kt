@@ -2,6 +2,8 @@ package com.example.myapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.os.SystemClock
 import android.widget.Button
 import android.widget.Chronometer
 
@@ -11,6 +13,11 @@ class MainActivity : AppCompatActivity() {
     var running = false
     var offset: Long = 0
 
+
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        savedInstanceState.putInt("ansver", 42)
+        super.onSaveInstanceState(savedInstanceState)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         start_button.setOnClickListener{
             if(!running){
+                set_base_time()
                 stopwatch.start()
                 running = true
             }
@@ -32,13 +40,24 @@ class MainActivity : AppCompatActivity() {
 
         pause_button.setOnClickListener{
             if (running){
+                save_offset()
                 stopwatch.stop()
                 running = false
             }
         }
         stop_button.setOnClickListener{
+            set_base_time()
             offset = 0
         }
+
+    }
+    //update time
+    fun set_base_time(){
+        stopwatch.base = SystemClock.elapsedRealtime()
+    }
+    //save offset
+    fun save_offset(){
+        offset = SystemClock.elapsedRealtime()
     }
 
 }
