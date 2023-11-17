@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
         savedInstanceState.putLong(OFFSET_KEY, offset)
         savedInstanceState.putBoolean(RUNNING_KEY, running)
         savedInstanceState.putLong(BASE_KEY, stopwatch.base)
-
         super.onSaveInstanceState(savedInstanceState)
     }
 
@@ -74,8 +73,23 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-    }
 
+    }
+    override fun onStop(){
+        super.onStop()
+        if (running){
+            save_offset()
+            stopwatch.stop()
+        }
+    }
+    override fun onRestart(){
+        super.onRestart()
+        if (running){
+            set_base_time()
+            stopwatch.start()
+            offset = 0
+        }
+    }
 
     //update time
     fun set_base_time(){
