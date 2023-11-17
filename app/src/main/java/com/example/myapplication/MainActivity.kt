@@ -13,9 +13,17 @@ class MainActivity : AppCompatActivity() {
     var running = false
     var offset: Long = 0
 
+    val OFFSET_KEY = "offset"
+    val RUNNING_KEY = "running"
+    val BASE_KEY = "base"
+
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         savedInstanceState.putInt("ansver", 42)
+        savedInstanceState.putLong(OFFSET_KEY, offset)
+        savedInstanceState.putBoolean(RUNNING_KEY, running)
+        savedInstanceState.putLong(BASE_KEY, stopwatch.base)
+
         super.onSaveInstanceState(savedInstanceState)
     }
 
@@ -23,8 +31,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if (savedInstanceState != null) {
+            var answer = savedInstanceState.getInt("answer")
+        }
+
 
         stopwatch = findViewById<Chronometer>(R.id.sw_timer)
+
+        if (savedInstanceState != null){
+            offset =savedInstanceState.getLong(OFFSET_KEY)
+            running = savedInstanceState.getBoolean(RUNNING_KEY)
+            if (running){
+                stopwatch.base = savedInstanceState.getLong(BASE_KEY)
+                stopwatch.start()
+            }
+            else set_base_time()
+        }
+
         var pause_button = findViewById<Button>(R.id.bt_pause)
         var start_button = findViewById<Button>(R.id.bt_start)
         var stop_button = findViewById<Button>(R.id.bt_stop)
@@ -50,7 +73,10 @@ class MainActivity : AppCompatActivity() {
             offset = 0
         }
 
+
     }
+
+
     //update time
     fun set_base_time(){
         stopwatch.base = SystemClock.elapsedRealtime()
