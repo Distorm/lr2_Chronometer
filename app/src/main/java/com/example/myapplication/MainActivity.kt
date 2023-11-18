@@ -18,21 +18,9 @@ class MainActivity : AppCompatActivity() {
     val BASE_KEY = "base"
 
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        savedInstanceState.putInt("ansver", 42)
-        savedInstanceState.putLong(OFFSET_KEY, offset)
-        savedInstanceState.putBoolean(RUNNING_KEY, running)
-        savedInstanceState.putLong(BASE_KEY, stopwatch.base)
-        super.onSaveInstanceState(savedInstanceState)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (savedInstanceState != null) {
-            var answer = savedInstanceState.getInt("answer")
-        }
 
 
         stopwatch = findViewById<Chronometer>(R.id.sw_timer)
@@ -68,15 +56,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
         stop_button.setOnClickListener{
-            set_base_time()
             offset = 0
+            set_base_time()
+
         }
 
-
-
     }
-    override fun onStop(){
-        super.onStop()
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        savedInstanceState.putLong(OFFSET_KEY, offset)
+        savedInstanceState.putBoolean(RUNNING_KEY, running)
+        savedInstanceState.putLong(BASE_KEY, stopwatch.base)
+        super.onSaveInstanceState(savedInstanceState)
+    }
+
+    override fun onPause(){
+        super.onPause()
         if (running){
             save_offset()
             stopwatch.stop()
@@ -93,11 +87,11 @@ class MainActivity : AppCompatActivity() {
 
     //update time
     fun set_base_time(){
-        stopwatch.base = SystemClock.elapsedRealtime()
+        stopwatch.base = SystemClock.elapsedRealtime() - offset
     }
     //save offset
     fun save_offset(){
-        offset = SystemClock.elapsedRealtime()
+        offset = SystemClock.elapsedRealtime() - stopwatch.base
     }
 
 }
